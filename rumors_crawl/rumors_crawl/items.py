@@ -8,7 +8,13 @@
 import scrapy
 
 
-class RumorsCrawlItem(scrapy.Item):
+class SnopeItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    date = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    innerTitle = scrapy.Field()
+    description = scrapy.Field()
+    claim = scrapy.Field()
+    claimReviewed = scrapy.Field()
