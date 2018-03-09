@@ -19,6 +19,7 @@ class PolitifactSpider(scrapy.Spider):
 
     def parse_article(self, response):
         item = response.meta['item']
+        item["referredUrl"] = response.request.url,
         item["innerTitle"] = response.xpath('//h1[@class="article__title"]//text()').extract_first()
         item["date"] = response.xpath('//p[@class="article__meta"]//span//text()').extract_first()
         item["content"] = ''.join(response.xpath('//div[@class="article__text"]//text()').extract())

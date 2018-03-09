@@ -24,6 +24,7 @@ class SnopesSpider(scrapy.Spider):
         item = response.meta['item']
         article = response.xpath('//div[contains(@class,"article-text")]')
 
+        item["referredUrl"] = response.request.url,
         item['innerTitle']=response.xpath('//h1/text()').extract_first()
         item['description']=response.xpath('//h2/text()').extract_first()
         item['claim']=article.xpath('.//p[@itemprop="claimReviewed"]//text()').extract_first()

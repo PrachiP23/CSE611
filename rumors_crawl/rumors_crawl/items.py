@@ -18,6 +18,7 @@ class SnopeItem(scrapy.Item):
     description = scrapy.Field()
     claim = scrapy.Field()
     claimReviewed = scrapy.Field()
+    referredUrl = scrapy.Field()
 
 class PolitifactItem(scrapy.Item):
     title = scrapy.Field()
@@ -25,3 +26,4 @@ class PolitifactItem(scrapy.Item):
     date = scrapy.Field()
     content = scrapy.Field()
     claimReviewed = scrapy.Field()
+    referredUrl = scrapy.Field()
