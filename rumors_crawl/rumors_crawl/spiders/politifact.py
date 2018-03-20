@@ -1,7 +1,6 @@
 import scrapy
 from rumors_crawl.items import PolitifactItem
 
-
 class PolitifactSpider(scrapy.Spider):
     name = 'politifact'
     allowed_domains = ['www.politifact.com']

@@ -1,36 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 27 15:05:15 2018
-
-@author: prach
-"""
+from rumors_crawl.items import ThoughcoItem
 
 import scrapy
 
 class BuzzFeed(scrapy.Spider):
-    name = "urbanLegends"
+    name = "urbanlegends"
 
     def start_requests(self):
         url = 'https://www.thoughtco.com/urban-legends-4132595'
-      #  tag = getattr(self, 'tag', None)
-       # if tag is not None:
-        #    url = url + 'tag/' + tag
         yield scrapy.Request(url, self.parse)
 
     def parse(self, response):
-        feedCards = response.xpath('//div[contains(@class,"loc content section-body")]//a/@href')
+        feedCards = response.xpath('//div[contains(@class,"section-body")]//li')
 
-        for href in feedCards.extract():
-        #    print(href)
-            if href is not None:
-                yield response.follow(href, callback=self.parse_article)
+        for article in feedCards:
+            href = article.xpath('./a/@href').extract_first()
+            title = article.xpath('.//h2//text()').extract_first()
+            item = ThoughcoItem(title=title)
+            yield response.follow(href, callback=self.parse_article, meta={'item':item})
 
 
     def parse_article(self,response):
-        details = response.xpath('//div[contains(@id,"flex_1-0")][1]/p[2]/text()')
+        item = response.meta['item']
+        content = response.xpath('//div[contains(@class,"article-content")]//text()')
+        innerTitle = response.xpath('//h1//text()')
+        description = response.xpath('//h2/text()')
+        date = response.xpath('//div[contains(@class,"article-updated-label")]//text()')
+        claim = response.xpath('//div[contains(@class,"article-content")]/p[1]//text()')
 
-        yield{
-                'description': details.extract_first(),
-                #'date': details[2].extract(),
-                #'status': details[3].extract()
-                }
+        claimReviewed1 = response.xpath('//div[contains(@class,"article-content")]/p[2]/*[5]/text()').extract_first()
+        claimReviewed2 = response.xpath('//div[contains(@class,"article-content")]/p[2]/*[5]/following-sibling::text()').extract_first()
+
+        item['content'] =  ''.join(content.extract()),
+        item['innerTitle'] = innerTitle.extract_first(),
+        item['description'] = description.extract_first(),
+        item['date'] = date.extract_first(),
+        item['claim'] = claim.extract_first(),
+        item['claimReviewed'] = ''.join(filter(None,(claimReviewed1,claimReviewed2)))
+        yield item

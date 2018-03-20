@@ -27,3 +27,14 @@ class PolitifactItem(scrapy.Item):
     content = scrapy.Field()
     claimReviewed = scrapy.Field()
     referredUrl = scrapy.Field()
+
+class ThoughcoItem(scrapy.Item):
+    date = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    innerTitle = scrapy.Field()
+    description = scrapy.Field()
+    claim = scrapy.Field()
+    claimReviewed = scrapy.Field()
+    referredUrl = scrapy.Field()
+    ciculatingSince = scrapy.Field()
