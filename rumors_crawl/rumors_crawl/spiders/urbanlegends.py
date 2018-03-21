@@ -31,6 +31,7 @@ class UrbanLegend(scrapy.Spider):
         claimReviewed1 = response.xpath('//div[contains(@class,"article-content")]/p[2]/*[5]/text()').extract_first()
         claimReviewed2 = response.xpath('//div[contains(@class,"article-content")]/p[2]/*[5]/following-sibling::text()').extract_first()
 
+        item['referredUrl'] = response.request.url
         item['content'] =  ''.join(content.extract()),
         item['innerTitle'] = innerTitle.extract_first(),
         item['description'] = description.extract_first(),
