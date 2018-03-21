@@ -27,8 +27,8 @@ class SnopesSpider(scrapy.Spider):
         item["referredUrl"] = response.request.url,
         item['innerTitle']=response.xpath('//h1/text()').extract_first()
         item['description']=response.xpath('//h2/text()').extract_first()
-        item['claim']=article.xpath('.//p[@itemprop="claimReviewed"]//text()').extract_first()
-        item['claimReviewed']=article.xpath('..//div[contains(@class,"claim")]/span/text()').extract_first()
+        item['claim']=article.xpath('.//p//text()').extract_first()
+        item['claimReviewed']=article.xpath('..//*[contains(@class,"claim")]//img/following-sibling::span/text()').extract_first()
         item['content'] = ''.join(article.xpath('./*[self::p or self::blockquote or self::article]//text()').extract())
         yield item
 #//div[contains(@class,"article-text")]//*[self::p or self::blockquote]//text()
