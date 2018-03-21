@@ -37,4 +37,3 @@ class ThoughcoItem(scrapy.Item):
     claim = scrapy.Field()
     claimReviewed = scrapy.Field()
     referredUrl = scrapy.Field()
-    ciculatingSince = scrapy.Field()

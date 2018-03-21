@@ -3,7 +3,7 @@ from rumors_crawl.items import ThoughcoItem
 
 import scrapy
 
-class BuzzFeed(scrapy.Spider):
+class UrbanLegend(scrapy.Spider):
     name = "urbanlegends"
 
     def start_requests(self):
