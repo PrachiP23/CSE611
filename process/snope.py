@@ -1,8 +1,6 @@
 from process.process import Process
 from datetime import datetime
 
-
-
 class SnopeProcess(Process):
 
     def process(self):
