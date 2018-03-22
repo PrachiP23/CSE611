@@ -44,7 +44,7 @@ def file_type(file):
     if "politifact" in file:
         return POLITIFACT
 
-def process(document, file_type):
+def normalize(document, file_type):
     #Cleaning document content
 
     if(file_type == BUZZFEED):
@@ -56,25 +56,22 @@ def process(document, file_type):
     if(file_type == URBAN_LEGENDS):
         processor = UrbanLegendProcess(document)
 
-    #if file_type != BUZZFEED:
-    #    document["innerTitle"] = ''.join(document["innerTitle"]).strip()
-    #    print(document["innerTitle"])
-    document = processor.process()
-    
-    #document["title"] = document["title"].strip()
-    #print(document["title"].strip())
+    return processor.process()
+
 
 def load():
     print("Loading the files to process")
 
     for file in get_files():
-        documents = json.load(open(file))
+        yield json.load(open(file))
 
-        for document in documents:
-            document = process(document,file_type(file))
+def persist(documents):
+    print("Preparing for persisting this docs")
 
-def preprocess():
-    print("Preprocessing the data ")
+def process(documents):
+    for document in documents:
+        yield normalize(document,file_type(file))
 
 if __name__ == '__main__':
-    load()
+    documents = process(load())
+    persist(documents)
