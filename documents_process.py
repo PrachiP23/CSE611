@@ -8,6 +8,7 @@ unrelated information.
 '''
 
 import os
+import hashlib
 import json
 
 from process.buzzfeed import BuzzFeedProcess
@@ -46,7 +47,6 @@ def file_type(file):
 
 def normalize(document, file_type):
     #Cleaning document content
-
     if(file_type == BUZZFEED):
         processor = BuzzFeedProcess(document)
     if(file_type == POLITIFACT):
@@ -56,21 +56,45 @@ def normalize(document, file_type):
     if(file_type == URBAN_LEGENDS):
         processor = UrbanLegendProcess(document)
 
+    document['type'] = file_type
     return processor.process()
 
+def compute_hash(content):
+    return hashlib.sha1(''.join(content).encode('utf-8')).hexdigest()
 
 def load():
     print("Loading the files to process")
-
     for file in get_files():
-        yield json.load(open(file))
+        documents = json.load(open(file))
+        yield {'documents':documents,'type':file_type(file)}
 
 def persist(documents):
     print("Preparing for persisting this docs")
-
-def process(documents):
     for document in documents:
-        yield normalize(document,file_type(file))
+        if not os.path.exists('cdata/{}/'.format(document["type"].lower())):
+            os.makedirs('cdata/{}/'.format(document["type"].lower()))
+
+        #Check if document exist
+        doc_name = 'cdata/{}/{}.json'.format(document["type"].lower(),document["id"])
+        if not os.path.exists(doc_name):
+            print("Creating new document")
+            with open(doc_name, 'w') as outfile:
+                json.dump(document, outfile)
+        else:
+            #Check if the document content has changed
+            current_document = json.load(open(doc_name))
+            current_hash = compute_hash(current_document['content'])
+            if current_hash!=compute_hash(document['content']):
+                print(document['type'])
+        #print(document["type"])
+        #print(document["id"])
+
+
+def process(loaded_docs):
+    for meta_doc in loaded_docs:
+        file_type = meta_doc['type']
+        for document in meta_doc['documents']:
+            yield normalize(document,file_type)
 
 if __name__ == '__main__':
     documents = process(load())
