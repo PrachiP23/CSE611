@@ -45,17 +45,19 @@ def file_type(file):
     if "politifact" in file:
         return POLITIFACT
 
+def build_processor(document, file_type):
+    if(file_type == BUZZFEED):
+        return BuzzFeedProcess(document)
+    if(file_type == POLITIFACT):
+        return PolitifactProcess(document)
+    if(file_type == SNOPES):
+        return SnopeProcess(document)
+    if(file_type == URBAN_LEGENDS):
+        return UrbanLegendProcess(document)
+
 def normalize(document, file_type):
     #Cleaning document content
-    if(file_type == BUZZFEED):
-        processor = BuzzFeedProcess(document)
-    if(file_type == POLITIFACT):
-        processor = PolitifactProcess(document)
-    if(file_type == SNOPES):
-        processor = SnopeProcess(document)
-    if(file_type == URBAN_LEGENDS):
-        processor = UrbanLegendProcess(document)
-
+    processor = build_processor(document, file_type)
     document['type'] = file_type
     return processor.process()
 
@@ -85,7 +87,8 @@ def persist(documents):
             current_document = json.load(open(doc_name))
             current_hash = compute_hash(current_document['content'])
             if current_hash!=compute_hash(document['content']):
-                print(document['type'])
+                processor = build_processor(current_document, document["type"])
+                processor.merge(document)
         #print(document["type"])
         #print(document["id"])
 
