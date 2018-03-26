@@ -41,7 +41,7 @@ def get_files():
     return files
 
 def load():
-    print("Loading the files to apply NLP")
+    #print("Loading the files to apply NLP")
     for file in get_files():
         documents = json.load(open(file))
         yield {'documents':documents,'type':file_type(file)}
