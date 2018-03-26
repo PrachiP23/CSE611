@@ -1,7 +1,7 @@
 '''
 @author Jose Ayerdis
 
-This script witll allow to process documents gather by the spiders
+This script will allow to process documents gather by the spiders
 into more coherent data. It will try to normalize the current data into
 sections with less noise that includes extra spaces, line jumps, and
 unrelated information.
@@ -15,7 +15,6 @@ from process.buzzfeed import BuzzFeedProcess
 from process.politifact import PolitifactProcess
 from process.snope import SnopeProcess
 from process.urbanlegend import UrbanLegendProcess
-from pprint import pprint
 
 
 URBAN_LEGENDS="URBAN_LEGENDS"
@@ -89,8 +88,7 @@ def persist(documents):
             if current_hash!=compute_hash(document['content']):
                 processor = build_processor(current_document, document["type"])
                 processor.merge(document)
-        #print(document["type"])
-        #print(document["id"])
+
 
 
 def process(loaded_docs):
