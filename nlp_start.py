@@ -49,5 +49,5 @@ def load(type=None):
 
 if __name__ == '__main__':
     documents = load(type=SNOPES)
-    #run(documents, sum(1 for x in load(type=SNOPES)))
-    run_lda(documents)
+    #run_lda(documents)
+    run_tfidf(documents)

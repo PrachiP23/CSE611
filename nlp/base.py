@@ -7,16 +7,21 @@ from gensim.models.ldamodel import LdaModel
 from nltk.tokenize import word_tokenize,sent_tokenize
 from nltk.stem.snowball import EnglishStemmer
 from nltk.corpus import stopwords
+from wordcloud import WordCloud
 import pyLDAvis.gensim
 from nltk import ngrams
+
+def get_stopwords():
+    english_stopwords = stopwords.words('english')
+    english_punkt = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '*', '@', '#', '$', '%','``','""',"''"]
+    return english_stopwords + english_punkt
+
 
 def get_words(text):
     words = word_tokenize(text)
     #Removing single letter words as they offer no insight
     #Also non numeric information is really not necesary
-    english_stopwords = stopwords.words('english')
-    english_punkt = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '*', '@', '#', '$', '%','``','""',"''"]
-    news_stopwords = english_stopwords + english_punkt
+    news_stopwords = get_stopwords()
 
     words = [word for word in words if len(word) > 1 and not word.isnumeric()]
     words = [word for word in words if word.lower() not in news_stopwords ]
@@ -41,6 +46,40 @@ def word_count(document):
         print(u'{};{}'.format(word, frequency))
 
     fdist.plot(30,cumulative=False)
+
+def tfidf(documents):
+
+    texts = []
+    idx = 0
+    for file_docs in documents:
+        document = file_docs["documents"]
+        words = get_words(document["content"])
+        if document["claim"]:
+            words = words + get_words(document["claim"])
+        stemmer = EnglishStemmer()
+        words = [stemmer.stem(word) for word in words]
+        texts.append(words)
+        #print(document["claim"])
+        #print(document["claimReviewed"])
+
+    dictionary = Dictionary(texts)
+    corpus = [dictionary.doc2bow(text) for text in texts]
+
+    tfidf = TfidfModel(corpus)
+    weights = tfidf[corpus[3]]
+    weights = [(dictionary[pair[0]], pair[1]) for pair in weights]
+
+    wc = WordCloud(background_color="white",
+        max_words=2000,
+        width=1024,
+        height=720,
+        stopwords=get_stopwords())
+
+
+    wc.generate_from_frequencies(dict(weights))
+    wc.to_file("word_cloud.png")
+    #data = pyLDAvis.gensim.prepare(tfidf, corpus, dictionary)
+    #pyLDAvis.save_html(data,'vis-tfidf.html')
 
 def lda(documents):
 
@@ -68,6 +107,9 @@ def lda(documents):
 
 def run_lda(documents):
     lda(documents)
+
+def run_tfidf(documents):
+    tfidf(documents)
 
 def run(documents, n_docs):
 
