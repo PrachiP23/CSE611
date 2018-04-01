@@ -3,9 +3,11 @@ from nltk import FreqDist
 import gensim.downloader as api
 from gensim.models import TfidfModel
 from gensim.corpora import Dictionary
+from gensim.models.ldamodel import LdaModel
 from nltk.tokenize import word_tokenize,sent_tokenize
 from nltk.stem.snowball import EnglishStemmer
 from nltk.corpus import stopwords
+import pyLDAvis.gensim
 from nltk import ngrams
 
 def get_words(text):
@@ -40,23 +42,43 @@ def word_count(document):
 
     fdist.plot(30,cumulative=False)
 
-def lda(document):
-    words = get_words(document["content"])
-    stemmer = EnglishStemmer()
-    words = [stemmer.stem(word) for word in words]
-    #print(words)
+def lda(documents):
 
+    texts = []
+    idx = 0
+    for file_docs in documents:
+        document = file_docs["documents"]
+        words = get_words(document["content"])
+        if document["claim"]:
+            words = words + get_words(document["claim"])
+        stemmer = EnglishStemmer()
+        words = [stemmer.stem(word) for word in words]
+        texts.append(words)
+        #print(document["claim"])
+        #print(document["claimReviewed"])
+
+    dictionary = Dictionary(texts)
+    corpus = [dictionary.doc2bow(text) for text in texts]
+
+    ldamodel = LdaModel(corpus, num_topics=10, id2word = dictionary, passes=20)
+    print(ldamodel.show_topics())
+    data = pyLDAvis.gensim.prepare(ldamodel, corpus, dictionary)
+    pyLDAvis.save_html(data,'vis.html')
+
+
+def run_lda(documents):
+    lda(documents)
 
 def run(documents, n_docs):
 
+    #lda(documents)
     random_doc = random.randint(1,n_docs)
-    #random_doc = 3
     idx = 0
     for file_docs in documents:
         ##We'll get a random document
         if random_doc==idx:
-            lda(file_docs["documents"])
+        #    lda(file_docs["documents"])
             #word_count(file_docs["documents"])
-            #gen_ngrams(file_docs["documents"],4)
-            #break
+            gen_ngrams(file_docs["documents"],5)
+            break
         idx = idx + 1

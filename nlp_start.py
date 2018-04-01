@@ -1,7 +1,7 @@
 import os
 import json
 from documents_process import load
-from nlp.base import run
+from nlp.base import run,run_lda
 
 URBAN_LEGENDS="URBAN_LEGENDS"
 SNOPES="SNOPES"
@@ -40,12 +40,14 @@ def get_files():
 
     return files
 
-def load():
+def load(type=None):
     #print("Loading the files to apply NLP")
     for file in get_files():
         documents = json.load(open(file))
-        yield {'documents':documents,'type':file_type(file)}
+        if not type or type == documents["type"]:
+            yield {'documents':documents,'type':file_type(file)}
 
 if __name__ == '__main__':
-    documents = load()
-    run(documents, sum(1 for x in load()))
+    documents = load(type=SNOPES)
+    #run(documents, sum(1 for x in load(type=SNOPES)))
+    run_lda(documents)
