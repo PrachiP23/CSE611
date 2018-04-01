@@ -72,23 +72,32 @@ def load():
 def persist(documents):
     print("Preparing for persisting this docs")
     for document in documents:
+        purgeable = not document["content"]
+
         if not os.path.exists('cdata/{}/'.format(document["type"].lower())):
             os.makedirs('cdata/{}/'.format(document["type"].lower()))
 
         #Check if document exist
         doc_name = 'cdata/{}/{}.json'.format(document["type"].lower(),document["id"])
         if not os.path.exists(doc_name):
-            print("Creating new document")
+            if purgeable:
+                print("Ignoring document with no content {}".format(document["id"]))
+                continue
+            print("Creating new document {}".format(document["id"]))
             with open(doc_name, 'w') as outfile:
                 json.dump(document, outfile)
         else:
-            #Check if the document content has changed
+            if purgeable:
+                print("Purging document {}".format(document["id"]))
+                os.remove(doc_name)
+                continue
+
             current_document = json.load(open(doc_name))
             current_hash = compute_hash(current_document['content'])
             if current_hash!=compute_hash(document['content']):
+                #Check if the document content has changed
                 processor = build_processor(current_document, document["type"])
                 processor.merge(document)
-
 
 
 def process(loaded_docs):

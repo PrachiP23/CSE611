@@ -21,7 +21,7 @@ class Process:
         return self.document
 
     def merge(self, new_document):
-        print("Mergin with new document")
+        print("Mergin with new document {}".format(new_document["id"]))
 
         if new_document["date"] != self.document["date"]:
 

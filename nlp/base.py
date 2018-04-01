@@ -1,5 +1,8 @@
 import random
 from nltk import FreqDist
+import gensim.downloader as api
+from gensim.models import TfidfModel
+from gensim.corpora import Dictionary
 from nltk.tokenize import word_tokenize,sent_tokenize
 from nltk.stem.snowball import EnglishStemmer
 from nltk.corpus import stopwords
@@ -27,16 +30,21 @@ def gen_ngrams(document, n):
 
     print(s)
 
-
-
 def word_count(document):
     words = get_words(document["content"])
-    #stemmer = EnglishStemmer()
-    #words = [stemmer.stem(word) for word in words]
+    stemmer = EnglishStemmer()
+    words = [stemmer.stem(word) for word in words]
     fdist = FreqDist(words)
     for word, frequency in fdist.most_common(50):
         print(u'{};{}'.format(word, frequency))
-    #fdist.plot(30,cumulative=False)
+
+    fdist.plot(30,cumulative=False)
+
+def lda(document):
+    words = get_words(document["content"])
+    stemmer = EnglishStemmer()
+    words = [stemmer.stem(word) for word in words]
+    #print(words)
 
 
 def run(documents, n_docs):
@@ -47,7 +55,8 @@ def run(documents, n_docs):
     for file_docs in documents:
         ##We'll get a random document
         if random_doc==idx:
+            lda(file_docs["documents"])
             #word_count(file_docs["documents"])
-            #gen_ngrams(file_docs["documents"],6)
-            break
+            #gen_ngrams(file_docs["documents"],4)
+            #break
         idx = idx + 1
