@@ -1,7 +1,7 @@
 import os
 import json
 from documents_process import load
-from nlp.base import run,run_lda
+from nlp.base import run,run_lda, run_tfidf
 
 URBAN_LEGENDS="URBAN_LEGENDS"
 SNOPES="SNOPES"

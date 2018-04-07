@@ -93,8 +93,6 @@ def lda(documents):
         stemmer = EnglishStemmer()
         words = [stemmer.stem(word) for word in words]
         texts.append(words)
-        #print(document["claim"])
-        #print(document["claimReviewed"])
 
     dictionary = Dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
