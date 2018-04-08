@@ -48,6 +48,9 @@ def load(type=None):
             yield {'documents':documents,'type':file_type(file)}
 
 if __name__ == '__main__':
-    documents = load(type=SNOPES)
+
     #run_lda(documents)
-    run_tfidf(documents)
+    run_tfidf(load(type=SNOPES))
+    run_tfidf(load(type=BUZZFEED))
+    run_tfidf(load(type=POLITIFACT))
+    run_tfidf(load(type=URBAN_LEGENDS))

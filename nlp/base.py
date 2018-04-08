@@ -1,4 +1,5 @@
 import random
+import json
 from nltk import FreqDist
 import gensim.downloader as api
 from gensim.models import TfidfModel
@@ -9,6 +10,8 @@ from nltk.stem.snowball import EnglishStemmer
 from nltk.corpus import stopwords
 from wordcloud import WordCloud
 import pyLDAvis.gensim
+import gensim
+import operator
 from nltk import ngrams
 
 def get_stopwords():
@@ -53,11 +56,10 @@ def tfidf(documents):
     idx = 0
     for file_docs in documents:
         document = file_docs["documents"]
+        type = file_docs["type"]
         words = get_words(document["content"])
-        if document["claim"]:
-            words = words + get_words(document["claim"])
-        stemmer = EnglishStemmer()
-        words = [stemmer.stem(word) for word in words]
+        #stemmer = EnglishStemmer()
+        #words = [stemmer.stem(word) for word in words]
         texts.append(words)
         #print(document["claim"])
         #print(document["claimReviewed"])
@@ -65,21 +67,47 @@ def tfidf(documents):
     dictionary = Dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
 
-    tfidf = TfidfModel(corpus)
-    weights = tfidf[corpus[3]]
-    weights = [(dictionary[pair[0]], pair[1]) for pair in weights]
+    tfidf = TfidfModel(corpus, normalize=True)
 
-    wc = WordCloud(background_color="white",
-        max_words=2000,
-        width=1024,
-        height=720,
-        stopwords=get_stopwords())
+    search_docs = []
+    for c in corpus:
+        search_doc = {}
+        weights = tfidf[c]
+        weights = [(dictionary[pair[0]], pair[1]) for pair in weights]
+        sorted_w = sorted(weights, key=lambda tup: tup[1], reverse=True)
 
+        search_words = []
+        ix = 0
+        th = 5
+        for word,weight in sorted_w:
+            if ix > th: break
+            search_words.append(word)
+            ix = ix + 1
 
-    wc.generate_from_frequencies(dict(weights))
-    wc.to_file("word_cloud.png")
+        search_doc = {}
+        search_doc["terms"] = search_words
+        search_doc["weighted_words"] = sorted_w
+        search_docs.append(search_doc)
+        #print(json.dumps(search_doc, ensure_ascii=False))
+
+    pathToFile = './twitter/' + type + '.json'
+    with open(pathToFile, 'w') as fp:
+        json.dump(search_docs, fp)
+
+    # wc = WordCloud(background_color="white",
+    #     max_words=2000,
+    #     width=1024,
+    #     height=720,
+    #     stopwords=get_stopwords())
+    #
+    #
+    # wc.generate_from_frequencies(dict(weights))
+    # wc.to_file("word_cloud.png")
+
     #data = pyLDAvis.gensim.prepare(tfidf, corpus, dictionary)
     #pyLDAvis.save_html(data,'vis-tfidf.html')
+
+
 
 def lda(documents):
 
