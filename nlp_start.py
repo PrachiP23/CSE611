@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 from documents_process import load
 from nlp.base import run,run_lda, run_tfidf
 
@@ -41,16 +42,22 @@ def get_files():
     return files
 
 def load(type=None):
+    today = datetime.date.today()
+    margin = datetime.timedelta(days = 5)
+
+    #datetime.strptime("03-03-2018",'%d-%m-%Y')
     #print("Loading the files to apply NLP")
     for file in get_files():
         documents = json.load(open(file))
         if not type or type == documents["type"]:
-            yield {'documents':documents,'type':file_type(file)}
+
+            document_date = datetime.datetime.strptime(documents["date"],'%d-%m-%Y')
+            if today - margin <= document_date.date() <= today + margin :
+                yield {'documents':documents,'type':file_type(file)}
 
 if __name__ == '__main__':
-
     #run_lda(documents)
-    run_tfidf(load(type=SNOPES))
-    run_tfidf(load(type=BUZZFEED))
-    run_tfidf(load(type=POLITIFACT))
+    # run_tfidf(load(type=SNOPES))
+    # run_tfidf(load(type=BUZZFEED))
+    # run_tfidf(load(type=POLITIFACT))
     run_tfidf(load(type=URBAN_LEGENDS))

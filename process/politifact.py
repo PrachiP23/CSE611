@@ -17,6 +17,8 @@ class PolitifactProcess(Process):
             preffix = "st"
         elif re.search(r"[\d\d]nd",document['date']):
             preffix = "nd"
+        elif re.search(r"[\d\d]rd",document['date']):
+            preffix = "rd"
 
         pattern = 'on %A, %B %d{}, %Y at %H:%M %p'.format(preffix)
         document['date'] = datetime.strptime(document['date'].replace('.',''), pattern).strftime('%d-%m-%Y')

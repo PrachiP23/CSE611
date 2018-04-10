@@ -90,9 +90,10 @@ def tfidf(documents):
         search_docs.append(search_doc)
         #print(json.dumps(search_doc, ensure_ascii=False))
 
-    pathToFile = './twitter/' + type + '.json'
-    with open(pathToFile, 'w') as fp:
-        json.dump(search_docs, fp)
+    if search_docs:
+        pathToFile = './twitter/' + type + '.json'
+        with open(pathToFile, 'w') as fp:
+            json.dump(search_docs, fp)
 
     # wc = WordCloud(background_color="white",
     #     max_words=2000,

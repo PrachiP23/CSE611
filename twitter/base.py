@@ -1,8 +1,9 @@
 import sys
 import json
 import tweepy
+import time
 from tweepy.streaming import StreamListener
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, timedelta
 from collections import Counter
 from tweepy import OAuthHandler
 from tweepy import API
@@ -39,17 +40,19 @@ if __name__ == '__main__':
     files = ["./SNOPES.JSON","POLITIFACT.JSON","BUZZFEED.JSON","URBAN_LEGENDS.JSON"]
 
     counter = 0
+
     for file in files:
         try:
             documents = json.load(open(file))
             for document in documents:
                 counter = counter + 1
                 query = ' '.join(document['terms'])
-                print(query)
+
                 searched_tweets = [status._json for status in tweepy.Cursor(api.search, q=query).items(1000)]
-                file = 'output/{}.json'.format(''.join(document['terms']))
+                file = 'output/{}{}.json'.format(''.join(document['terms']),int(time.time()))
 
                 if searched_tweets:
+                    print("Retrieved tweets from topic {}",' '.join(document["term"]))
                     with open(file, 'w', encoding='utf8') as fp:
                         json.dump(searched_tweets, fp)
         except FileNotFoundError:

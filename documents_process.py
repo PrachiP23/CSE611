@@ -66,6 +66,8 @@ def compute_hash(content):
 def load():
     print("Loading the files to process")
     for file in get_files():
+        if os.stat(file).st_size == 0: continue
+
         documents = json.load(open(file))
         yield {'documents':documents,'type':file_type(file)}
 

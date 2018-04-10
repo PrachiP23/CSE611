@@ -2,3 +2,4 @@
 cdata
 *.png
 secrets.yml
+*.json

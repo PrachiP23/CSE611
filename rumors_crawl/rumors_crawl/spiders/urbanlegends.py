@@ -7,7 +7,7 @@ class UrbanLegend(scrapy.Spider):
     name = "urbanlegends"
 
     def start_requests(self):
-        url = 'https://www.thoughtco.com/urban-legends-4132595'
+        url = 'https://www.thoughtco.com/urban-legends-in-the-news-4132594'
         yield scrapy.Request(url, self.parse)
 
     def parse(self, response):
