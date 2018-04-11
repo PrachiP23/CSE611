@@ -15,16 +15,20 @@ from process.buzzfeed import BuzzFeedProcess
 from process.politifact import PolitifactProcess
 from process.snope import SnopeProcess
 from process.urbanlegend import UrbanLegendProcess
+from process.dailyWire import DailyWireProcess
+from process.breitbart import BreitbartProcess
 
 
 URBAN_LEGENDS="URBAN_LEGENDS"
 SNOPES="SNOPES"
 BUZZFEED="BUZZFEED"
 POLITIFACT="POLITIFACT"
+DAILYWIRE = "DAILYWIRE"
+BREITBART = "BREITBART"
 
 def get_files():
     basedir = './rumors_crawl/data/'
-    documents = ['snopes','buzzfeed','politifact','urbanlegends']
+    documents = ['snopes','buzzfeed','politifact','urbanlegends', 'dailyWire', 'breitbart' ]
 
     files = []
     for document in documents:
@@ -43,6 +47,10 @@ def file_type(file):
         return BUZZFEED
     if "politifact" in file:
         return POLITIFACT
+    if "dailyWire" in file:
+        return DAILYWIRE
+    if "breitbart" in file:
+        return BREITBART
 
 def build_processor(document, file_type):
     if(file_type == BUZZFEED):
@@ -53,6 +61,10 @@ def build_processor(document, file_type):
         return SnopeProcess(document)
     if(file_type == URBAN_LEGENDS):
         return UrbanLegendProcess(document)
+    if(file_type == DAILYWIRE):
+        return DailyWireProcess(document)
+    if(file_type == BREITBART):
+        return BreitbartProcess(document)
 
 def normalize(document, file_type):
     #Cleaning document content
