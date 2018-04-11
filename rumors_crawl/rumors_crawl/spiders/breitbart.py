@@ -17,9 +17,9 @@ class Breitbart(scrapy.Spider):
 
     def parse_article(self,response):
         article_info = response.xpath('//div[@id="MainW"]/article')
-        titleClass = article_info.xpath('./header/h1')
-        date_time = article_info.xpath('./header/p/span[2]')
-        content = article_info.xpath('./div')
+        titleClass = article_info.xpath('./header/h1/text()')
+        date_time = article_info.xpath('./header/p/span[2]/text()')
+        content = article_info.xpath('./div/h2/text() | ./div/p/text()')
         yield{
                 'title': titleClass.extract_first(),
                 'referred_url':response.request.url,

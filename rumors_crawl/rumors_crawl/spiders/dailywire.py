@@ -16,8 +16,8 @@ class DailyWire(scrapy.Spider):
 
 
     def parse_article(self,response):
-        titleClass = response.xpath('//article/header/h1')
-        date_time = response.xpath('//div[contains(@class,"byline")]/div/time')
+        titleClass = response.xpath('//article/header/h1/text()')
+        date_time = response.xpath('//div[contains(@class,"byline")]/div/time/text()')
         content = response.xpath('//div[contains(@class, "field-body")]/p/text()')
         yield{
                 'title': titleClass.extract_first(),
